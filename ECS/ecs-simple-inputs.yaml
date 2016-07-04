@@ -1,0 +1,11 @@
+ecs_server: xx.xx.xx.xx
+ecs_server_key_filename: ~/.ssh/id_rsa
+ecs_server_user: root
+ecs_server_port: 8000
+ecs_client: xx.xx.xx.xx
+ecs_client_key_filename: ~/.ssh/id_rsa
+ecs_client_user: root
+ecs_log_server: xx.xx.xx.xx
+ecs_log_user: root
+ecs_log_password: root
+

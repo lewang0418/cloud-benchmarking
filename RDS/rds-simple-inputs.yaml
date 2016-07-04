@@ -1,0 +1,11 @@
+mysql_server: xx.xx.xx.xx
+mysql_port: 3306
+mysql_user: root
+mysql_password: root
+mysql_db: test
+rds_client: xx.xx.xx.xx
+rds_client_key_filename:  ~/.ssh/id_rsa
+rds_client_user: root
+rds_log_server: xx.xx.xx.xx
+rds_log_user: root
+rds_log_password: root

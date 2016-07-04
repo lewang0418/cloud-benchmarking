@@ -1,0 +1,127 @@
+tosca_definitions_version: cloudify_dsl_1_2
+
+imports:  
+  - http://www.getcloudify.org/spec/cloudify/3.3.1/types.yaml
+  - http://www.getcloudify.org/spec/fabric-plugin/1.3.1/plugin.yaml
+
+inputs:
+
+  ecs_server:
+    default: localhost
+
+  ecs_server_key_filename:
+    default: ~/.ssh/id_rsa
+
+  ecs_server_user:
+    default: root
+
+  ecs_server_port:
+    default: 8000
+
+  ecs_client:
+    default: localhost
+
+  ecs_client_key_filename:
+    default: ~/.ssh/id_rsa
+
+  ecs_client_user:
+    default: root
+
+  ecs_log_server:
+    default: localhost
+
+  ecs_log_user:
+    default: root
+
+  ecs_log_password:
+    default: root
+
+
+node_templates:
+
+  test_server:
+      type: cloudify.nodes.ApplicationServer
+      interfaces:
+        cloudify.interfaces.lifecycle:
+          create:
+            implementation: fabric.fabric_plugin.tasks.run_script
+            inputs:
+              script_path: scripts/server/ecs-test-install.sh
+              fabric_env:
+                  host_string: { get_input: ecs_server }
+                  user: { get_input: ecs_server_user }
+                  key_filename: { get_input: ecs_server_key_filename }
+          start:
+            implementation: fabric.fabric_plugin.tasks.run_script
+            inputs:
+              server_port: { get_input: ecs_server_port }
+              script_path: scripts/server/ecs-test-start.sh
+              fabric_env:
+                  host_string: { get_input: ecs_server }
+                  user: { get_input: ecs_server_user }
+                  key_filename: { get_input: ecs_server_key_filename }
+          stop:
+            implementation: fabric.fabric_plugin.tasks.run_script
+            inputs:
+              host: { get_input: ecs_log_server }
+              host_name: { get_input: ecs_log_user }
+              host_password: { get_input: ecs_log_password }
+              script_path: scripts/server/ecs-test-stop.sh
+              fabric_env:
+                  host_string: { get_input: ecs_server }
+                  user: { get_input: ecs_server_user }
+                  key_filename: { get_input: ecs_server_key_filename }
+      relationships:
+        - type: cloudify.relationships.contained_in
+          target: server_host
+
+  test_client:
+      type: cloudify.nodes.ApplicationServer
+      interfaces:
+        cloudify.interfaces.lifecycle:
+          create:
+            implementation: fabric.fabric_plugin.tasks.run_script
+            inputs:
+              script_path: scripts/client/ecs-test-install.sh
+              fabric_env:
+                  host_string: { get_input: ecs_client }
+                  user: { get_input: ecs_client_user }
+                  key_filename: { get_input: ecs_client_key_filename }
+          start:
+            implementation: fabric.fabric_plugin.tasks.run_script
+            inputs:
+              server_ip: { get_input: ecs_server }
+              server_port: { get_input: ecs_server_port }
+              script_path: scripts/client/ecs-test-start.sh
+              fabric_env:
+                  host_string: { get_input: ecs_client }
+                  user: { get_input: ecs_client_user }
+                  key_filename: { get_input: ecs_client_key_filename }
+          stop:
+            implementation: fabric.fabric_plugin.tasks.run_script
+            inputs:
+              host: { get_input: ecs_log_server }
+              host_name: { get_input: ecs_log_user }
+              host_password: { get_input: ecs_log_password }
+              script_path: scripts/client/ecs-test-stop.sh
+              fabric_env:
+                  host_string: { get_input: ecs_client }
+                  user: { get_input: ecs_client_user }
+                  key_filename: { get_input: ecs_client_key_filename }
+      relationships:
+        - type: cloudify.relationships.contained_in
+          target: server_host
+        - type: cloudify.relationships.depends_on
+          target: test_server
+
+  server_host:
+    type: cloudify.nodes.Compute
+    properties:
+      ip: { get_input: ecs_server }
+      install_agent: false
+
+  client_host:
+    type: cloudify.nodes.Compute
+    properties:
+      ip: { get_input: ecs_client }
+      install_agent: false
