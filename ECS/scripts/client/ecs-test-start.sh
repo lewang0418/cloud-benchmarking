@@ -12,8 +12,8 @@ done
 ctx logger info "RAM"
 for block in 1K 32K 64K 128K 512K 1024K
 do
-sysbench --test=memory --memory-block-size=${block} --memory-scope=global --memory-total-size=50G --memory-oper=read run > ~/ram_block_${block}.log
-sysbench --test=memory --memory-block-size=${block} --memory-scope=global --memory-total-size=50G --memory-oper=write run > ~/ram_block_${block}.log
+sysbench --test=memory --memory-block-size=${block} --memory-scope=global --memory-total-size=50G --memory-oper=read run > ~/ram_block_read_${block}.log
+sysbench --test=memory --memory-block-size=${block} --memory-scope=global --memory-total-size=50G --memory-oper=write run > ~/ram_block_write_${block}.log
 done
 
 # File system benchmarking
