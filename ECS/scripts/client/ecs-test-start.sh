@@ -8,6 +8,11 @@ do
 sysbench --test=cpu --cpu-max-prime=10000 --num-threads=${thread} run > ~/cpu_thread_${thread}.log
 done
 
+for number in 10000 20000 40000 80000 
+do
+sysbench --test=cpu --cpu-max-prime=${number} --num-threads=32 run > ~/cpu_number_${number}.log
+done
+
 # Memory benchmarking
 ctx logger info "RAM"
 for block in 1K 32K 64K 128K 512K 1024K
