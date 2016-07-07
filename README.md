@@ -7,6 +7,11 @@ The contents of this repository:
 - The Blueprint that you will execute to install benchmarking packages, run benchmarking and collect results.
 - The supporting scripts.
 
+## Install Aria-tosca
+`pip install aria-tosca`
+
+## Download benchmarking blueprints
+`git clone https://github.com/lewang0418/cloud-benchmarking.git`
 
 ## How to Execute this Blueprint for ECS (Elastic Computing Service) instances
 
